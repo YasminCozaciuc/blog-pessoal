@@ -1,0 +1,13 @@
+package com.generation.blogdayasmin;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BlogdayasminApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(BlogdayasminApplication.class, args);
+	}
+
+}
