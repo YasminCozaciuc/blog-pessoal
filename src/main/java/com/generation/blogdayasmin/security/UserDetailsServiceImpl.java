@@ -1,49 +1,33 @@
 package com.generation.blogdayasmin.security;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+import java.util.Optional;
 
-@Configuration
-@EnableWebSecurity
-public class UserDetailsServiceImpl {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+import com.generation.blogdayasmin.model.Usuario;
+import com.generation.blogdayasmin.repository.UsuarioRepository;
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-    
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
-        http
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and().csrf().disable()
-            .cors();
+	@Override
+	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-        http
-            .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/usuarios/logar").permitAll()
-                .requestMatchers("/usuarios/cadastrar").permitAll()
-                .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                .anyRequest().authenticated())
-            .httpBasic();
+		Optional<Usuario> usuario = usuarioRepository.findByUsuario(userName);
 
-        return http.build();
-
-    }
+		if (usuario.isPresent())
+			return new UserDetailsImpl(usuario.get());
+		else
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+			
+	}
 }

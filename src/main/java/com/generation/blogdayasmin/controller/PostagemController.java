@@ -3,6 +3,8 @@ package com.generation.blogdayasmin.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,6 @@ import com.generation.blogdayasmin.model.Postagem;
 import com.generation.blogdayasmin.repository.PostagemRepository;
 import com.generation.blogdayasmin.repository.TemaRepository;
 
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/postagens")
